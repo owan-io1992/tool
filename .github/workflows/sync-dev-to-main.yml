@@ -21,3 +21,4 @@ jobs:
           base: dev
           head: main
           delete-branch: true
+          token: ${{ secrets.REPO_PAT }}
