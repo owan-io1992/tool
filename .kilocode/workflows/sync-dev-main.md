@@ -1,5 +1,14 @@
 # Submit sync Workflow
-1. pull git latest change  
-2. check out new branch chore/sync_dev_main  
-3. merge dev change to main  
-4. create pull request  
+
+exec command
+```bash
+DT=$(date +"%Y-%m-%d")
+SOURCE_BRANCH=dev
+TARGET_BRANCH=main
+
+git co ${TARGET_BRANCH}
+git pull 
+git co -b chore/sync_dev_main
+git merge --no-ff --no-commit remotes/origin/${SOURCE_BRANCH}
+git commit -m "chore: trunk-sync with ${SOURCE_BRANCH} to ${TARGET_BRANCH} ($DT)"
+```
