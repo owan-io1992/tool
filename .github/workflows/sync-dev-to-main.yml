@@ -1,0 +1,23 @@
+name: Sync dev to main
+
+on:
+  workflow_dispatch:
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+
+      - uses: remarkablemark/sync-branch@v1
+        with:
+          base: dev
+          head: main
+          delete-branch: true
