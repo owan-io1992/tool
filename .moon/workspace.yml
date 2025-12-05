@@ -5,7 +5,11 @@ $schema: './cache/schemas/workspace.json'
 
 projects:
   - 'apps/*'
-  - 'packages/*'
 vcs:
   manager: 'git'
   defaultBranch: 'dev'
+
+  hooks:
+    pre-commit:
+      - 'moon run :lint --affected'
+  syncHooks: true
