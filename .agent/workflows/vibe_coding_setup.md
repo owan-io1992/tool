@@ -21,11 +21,13 @@ This project follows the "Vibe Coding" methodology.
 - **Aesthetics**: Prioritize rich aesthetics, modern typography, and dynamic animations.
 - **Code Quality**: Use TypeScript for type safety.
 - **Workflow**:
-  1. Plan features.
-  2. Build foundation (styles, tokens).
-  3. Create components.
-  4. Assemble pages.
-  5. Polish (animations, transitions).
+  1. **Branching**: Create a new branch (`feature/xyz` or `fix/xyz`) - **NEVER commit to main directly**.
+  2. Plan features.
+  3. Build foundation (styles, tokens).
+  4. Create components.
+  5. Assemble pages.
+  6. Polish (animations, transitions).
+  7. **Finalize**: Commit changes and open a Pull Request (PR).
 
 ## 4. Setup Verification
 To verify the setup:
