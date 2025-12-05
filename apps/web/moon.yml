@@ -1,0 +1,27 @@
+language: 'typescript'
+
+tasks:
+  init:
+    command: 'bun install'
+    inputs:
+      - 'package.json'
+      - 'bun.lock'
+    outputs:
+      - 'node_modules'
+
+  dev:
+    command: 'bun run dev'
+    local: true
+
+  lint:
+    command: 'bun run lint'
+    inputs:
+      - 'src/**/*'
+      - 'eslint.config.js'
+
+  build:
+    command: 'bun run build'
+    inputs:
+      - 'src/**/*'
+    outputs:
+      - 'dist'
