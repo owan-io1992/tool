@@ -1,0 +1,26 @@
+{
+  "app": {
+    "title": "工具應用"
+  },
+  "menu": {
+    "password": "密碼",
+    "passwordGenerator": "產生器",
+    "passwordLeak": "外洩檢查",
+    "network": "網路",
+    "cidrCalculator": "CIDR 計算器",
+    "epoch": "Epoch",
+    "epochConverter": "轉換器"
+  },
+  "home": {
+    "welcome": "歡迎使用工具應用",
+    "description": "開發者實用工具集合",
+    "passwordDesc": "產生安全密碼與檢查外洩",
+    "networkDesc": "CIDR 計算與其他網路工具",
+    "epochDesc": "時間戳轉換與日期處理"
+  },
+  "common": {
+    "language": "語言",
+    "english": "英文",
+    "traditionalChinese": "繁體中文"
+  }
+}

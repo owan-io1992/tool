@@ -1,0 +1,26 @@
+{
+  "app": {
+    "title": "Tool App"
+  },
+  "menu": {
+    "password": "Password",
+    "passwordGenerator": "Generator",
+    "passwordLeak": "Leak Check",
+    "network": "Network",
+    "cidrCalculator": "CIDR Calculator",
+    "epoch": "Epoch",
+    "epochConverter": "Converter"
+  },
+  "home": {
+    "welcome": "Welcome to Tool App",
+    "description": "A collection of useful developer tools",
+    "passwordDesc": "Generate secure passwords and check for leaks",
+    "networkDesc": "Calculate CIDR and other network utilities",
+    "epochDesc": "Convert timestamps and work with dates"
+  },
+  "common": {
+    "language": "Language",
+    "english": "English",
+    "traditionalChinese": "Traditional Chinese"
+  }
+}
