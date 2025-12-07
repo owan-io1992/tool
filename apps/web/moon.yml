@@ -15,9 +15,18 @@ tasks:
 
   lint:
     command: 'bun run lint'
+    deps:
+      - 'typecheck'
     inputs:
       - 'src/**/*'
       - 'eslint.config.js'
+
+  typecheck:
+    command: 'bun run typecheck'
+    inputs:
+      - 'src/**/*'
+      - 'tsconfig.json'
+      - 'tsconfig.*.json'
 
   build:
     command: 'bun run build'
