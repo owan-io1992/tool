@@ -22,5 +22,25 @@
     "language": "Language",
     "english": "English",
     "traditionalChinese": "Traditional Chinese"
+  },
+  "generator": {
+    "title": "Password Generator",
+    "settings": "Settings",
+    "length": "Length",
+    "count": "Count",
+    "characters": "Characters",
+    "uppercase": "Uppercase (A-Z)",
+    "lowercase": "Lowercase (a-z)",
+    "numbers": "Numbers (0-9)",
+    "symbols": "Symbols (!@#...)",
+    "customSymbols": "Custom Symbols",
+    "generate": "Generate",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "strength": "Strength",
+    "profiles": "Quick Profiles",
+    "simple": "Simple",
+    "medium": "Medium",
+    "high": "High"
   }
 }
