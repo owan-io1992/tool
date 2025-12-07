@@ -22,5 +22,25 @@
     "language": "語言",
     "english": "英文",
     "traditionalChinese": "繁體中文"
+  },
+  "generator": {
+    "title": "密碼產生器",
+    "settings": "設定",
+    "length": "長度",
+    "count": "產生數量",
+    "characters": "使用字元",
+    "uppercase": "大寫字母 (A-Z)",
+    "lowercase": "小寫字母 (a-z)",
+    "numbers": "數字 (0-9)",
+    "symbols": "特殊符號 (!@#...)",
+    "customSymbols": "自訂符號",
+    "generate": "產生",
+    "copy": "複製",
+    "copied": "已複製!",
+    "strength": "強度",
+    "profiles": "快速設定",
+    "simple": "簡易",
+    "medium": "中等",
+    "high": "高強"
   }
 }
