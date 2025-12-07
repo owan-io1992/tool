@@ -26,10 +26,8 @@ describe('Layout Component', () => {
   const renderWithRouterAndI18n = (component: React.ReactNode) => {
     return render(
       <I18nextProvider i18n={i18n}>
-        <BrowserRouter>
-          {component}
-        </BrowserRouter>
-      </I18nextProvider>
+        <BrowserRouter>{component}</BrowserRouter>
+      </I18nextProvider>,
     );
   };
 
@@ -47,7 +45,7 @@ describe('Layout Component', () => {
 
   it('toggles language when buttons are clicked', async () => {
     renderWithRouterAndI18n(<Layout />);
-    
+
     const zhButton = screen.getByText('繁中');
     fireEvent.click(zhButton);
     expect(await screen.findByText('工具應用')).toBeDefined();
