@@ -5,8 +5,10 @@ const CidrCalculator: React.FC = () => {
   const { t } = useTranslation();
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-slate-100 transition-colors">{t('menu.cidrCalculator')}</h2>
-      <p className="text-gray-600 dark:text-slate-400 transition-colors">Coming soon...</p>
+      <h2 className="mb-4 text-2xl font-bold text-gray-900 transition-colors dark:text-slate-100">
+        {t('menu.cidrCalculator')}
+      </h2>
+      <p className="text-gray-600 transition-colors dark:text-slate-400">Coming soon...</p>
     </div>
   );
 };

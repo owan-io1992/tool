@@ -21,6 +21,13 @@ tasks:
       - 'src/**/*'
       - 'eslint.config.js'
 
+  format:
+    command: 'bun run format'
+    inputs:
+      - 'src/**/*'
+      - '.prettierrc'
+      - '.prettierignore'
+
   typecheck:
     command: 'bun run typecheck'
     inputs:

@@ -3,22 +3,20 @@ import { initReactI18next } from 'react-i18next';
 import en from './locales/en.json';
 import zhTW from './locales/zh-TW.json';
 
-i18n
-  .use(initReactI18next)
-  .init({
-    resources: {
-      en: {
-        translation: en,
-      },
-      'zh-TW': {
-        translation: zhTW,
-      },
+i18n.use(initReactI18next).init({
+  resources: {
+    en: {
+      translation: en,
     },
-    lng: 'en', // default language
-    fallbackLng: 'en',
-    interpolation: {
-      escapeValue: false,
+    'zh-TW': {
+      translation: zhTW,
     },
-  });
+  },
+  lng: 'en', // default language
+  fallbackLng: 'en',
+  interpolation: {
+    escapeValue: false,
+  },
+});
 
 export default i18n;
