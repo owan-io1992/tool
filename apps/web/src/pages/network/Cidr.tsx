@@ -20,7 +20,7 @@ const calculateWildcard = (netmask: string): string => {
   try {
     const parts = netmask.split('.');
     if (parts.length !== 4) return '';
-    return parts.map(part => 255 - parseInt(part, 10)).join('.');
+    return parts.map((part) => 255 - parseInt(part, 10)).join('.');
   } catch {
     return '';
   }
@@ -128,8 +128,12 @@ const CidrCalculator: React.FC = () => {
               const endBytes = endAddr.toUnsignedByteArray();
 
               // Manual hex construction from bytes to avoid property access issues
-              const startHex = Array.from(startBytes).map(b => b.toString(16).padStart(2, '0')).join('');
-              const endHex = Array.from(endBytes).map(b => b.toString(16).padStart(2, '0')).join('');
+              const startHex = Array.from(startBytes)
+                .map((b) => b.toString(16).padStart(2, '0'))
+                .join('');
+              const endHex = Array.from(endBytes)
+                .map((b) => b.toString(16).padStart(2, '0'))
+                .join('');
 
               const startBig = BigInt('0x' + startHex);
               const endBig = BigInt('0x' + endHex);
@@ -152,9 +156,9 @@ const CidrCalculator: React.FC = () => {
                 wildcard,
                 network,
                 broadcast,
-                cidrMask
+                cidrMask,
               } as NetworkInfo,
-              error: null
+              error: null,
             };
           }
         }
@@ -174,7 +178,8 @@ const CidrCalculator: React.FC = () => {
         // For IPv4: 2^(32-mask) - 2 (except /31 and /32)
         let hostsCount = 0;
         if (cidrMask === 32) hostsCount = 1;
-        else if (cidrMask === 31) hostsCount = 2; // Point-to-point usually
+        else if (cidrMask === 31)
+          hostsCount = 2; // Point-to-point usually
         else hostsCount = Math.pow(2, 32 - cidrMask) - 2;
 
         const totalHosts = hostsCount <= 0 ? '0' : hostsCount.toLocaleString();
@@ -215,7 +220,7 @@ const CidrCalculator: React.FC = () => {
             totalHosts: totalHosts,
             cidrMask: cidrMask,
           } as NetworkInfo,
-          error: null
+          error: null,
         };
       }
 
@@ -232,14 +237,13 @@ const CidrCalculator: React.FC = () => {
             hostMax: addr.endAddress().correctForm(),
             network: `${addr.startAddress().correctForm()}/${cidrMask}`,
             totalHosts: 'Huge',
-            cidrMask: cidrMask
+            cidrMask: cidrMask,
           } as NetworkInfo,
-          error: null
+          error: null,
         };
       }
 
       return { result: null, error: 'cidr.errorInvalid' };
-
     } catch (e) {
       console.error(e);
       return { result: null, error: 'cidr.errorInvalid' };
@@ -267,7 +271,7 @@ const CidrCalculator: React.FC = () => {
             <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              className="h-32 w-full resize-none rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white font-mono"
+              className="h-32 w-full resize-none rounded-lg border border-gray-300 bg-gray-50 p-2.5 font-mono text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
             />
           </div>
 
@@ -291,10 +295,11 @@ const CidrCalculator: React.FC = () => {
           ) : (
             <div className="space-y-4 font-mono text-sm text-gray-900 dark:text-gray-200">
               <div className="grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1">
-
                 {/* Address */}
                 <div className="text-gray-500 dark:text-gray-400">{t('cidr.address')}:</div>
-                <div className="text-blue-600 dark:text-blue-400 font-bold break-all">{result.address}</div>
+                <div className="font-bold break-all text-blue-600 dark:text-blue-400">
+                  {result.address}
+                </div>
 
                 {/* Netmask */}
                 {result.netmask && (
@@ -320,7 +325,9 @@ const CidrCalculator: React.FC = () => {
                 {result.network && (
                   <>
                     <div className="text-gray-500 dark:text-gray-400">{t('cidr.network')}:</div>
-                    <div className="text-blue-600 dark:text-blue-400 break-all">{result.network}</div>
+                    <div className="break-all text-blue-600 dark:text-blue-400">
+                      {result.network}
+                    </div>
                   </>
                 )}
 
@@ -328,7 +335,9 @@ const CidrCalculator: React.FC = () => {
                 {result.broadcast && (
                   <>
                     <div className="text-gray-500 dark:text-gray-400">{t('cidr.broadcast')}:</div>
-                    <div className="text-blue-600 dark:text-blue-400 break-all">{result.broadcast}</div>
+                    <div className="break-all text-blue-600 dark:text-blue-400">
+                      {result.broadcast}
+                    </div>
                   </>
                 )}
 
@@ -336,7 +345,9 @@ const CidrCalculator: React.FC = () => {
                 {result.hostMin && (
                   <>
                     <div className="text-gray-500 dark:text-gray-400">{t('cidr.hostMin')}:</div>
-                    <div className="text-blue-600 dark:text-blue-400 break-all">{result.hostMin}</div>
+                    <div className="break-all text-blue-600 dark:text-blue-400">
+                      {result.hostMin}
+                    </div>
                   </>
                 )}
 
@@ -344,7 +355,9 @@ const CidrCalculator: React.FC = () => {
                 {result.hostMax && (
                   <>
                     <div className="text-gray-500 dark:text-gray-400">{t('cidr.hostMax')}:</div>
-                    <div className="text-blue-600 dark:text-blue-400 break-all">{result.hostMax}</div>
+                    <div className="break-all text-blue-600 dark:text-blue-400">
+                      {result.hostMax}
+                    </div>
                   </>
                 )}
 
@@ -358,8 +371,9 @@ const CidrCalculator: React.FC = () => {
 
                 {/* Type/Version for references that might be useful */}
                 <div className="text-gray-500 dark:text-gray-400">{t('cidr.type')}:</div>
-                <div>{result.version} {result.type}</div>
-
+                <div>
+                  {result.version} {result.type}
+                </div>
               </div>
             </div>
           )}
