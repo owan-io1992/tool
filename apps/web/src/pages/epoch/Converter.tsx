@@ -38,6 +38,45 @@ const getRelativeTime = (date: Date, now: number) => {
   return rtf.format(Math.round(diffInSeconds / 31536000), 'year');
 };
 
+const parseDateInput = (input: string): Date | null => {
+  const trimmed = input.trim();
+  if (!trimmed) return null;
+  let date: Date | null = null;
+
+  // Try parsing as number (Unix Timestamp)
+  if (/^-?\d+(\.\d+)?$/.test(trimmed)) {
+    const num = parseFloat(trimmed);
+    // Guess unit based on magnitude
+    if (Math.abs(num) < 1e11) {
+      // Seconds
+      date = new Date(num * 1000);
+    } else if (Math.abs(num) < 1e14) {
+      // Milliseconds
+      date = new Date(num);
+    } else if (Math.abs(num) < 1e17) {
+      // Microseconds
+      date = new Date(num / 1000);
+    } else {
+      // Nanoseconds
+      date = new Date(num / 1000000);
+    }
+  } else {
+    // Try parsing as String
+    date = new Date(trimmed);
+  }
+
+  // Check if valid date
+  if (date && !isNaN(date.getTime())) {
+    try {
+      date.toISOString();
+      return date;
+    } catch {
+      return null;
+    }
+  }
+  return null;
+};
+
 const EpochConverter: React.FC = () => {
   const { t } = useTranslation();
   const [input, setInput] = useState<string>(() => Math.floor(Date.now() / 1000).toString());
@@ -64,46 +103,17 @@ const EpochConverter: React.FC = () => {
     }
   }, []);
 
-  const parsedDate = useMemo(() => {
-    if (!input) return null;
+  const parsedResults = useMemo(() => {
+    const lines = input
+      .split('\n')
+      .map((l) => l.trim())
+      .filter((l) => l !== '');
+    if (lines.length === 0) return [];
 
-    const trimmed = input.trim();
-    let date: Date | null = null;
-
-    // Try parsing as number (Unix Timestamp)
-    if (/^-?\d+(\.\d+)?$/.test(trimmed)) {
-      const num = parseFloat(trimmed);
-      // Guess unit based on magnitude
-      if (Math.abs(num) < 1e11) {
-        // Seconds
-        date = new Date(num * 1000);
-      } else if (Math.abs(num) < 1e14) {
-        // Milliseconds
-        date = new Date(num);
-      } else if (Math.abs(num) < 1e17) {
-        // Microseconds
-        date = new Date(num / 1000);
-      } else {
-        // Nanoseconds
-        date = new Date(num / 1000000);
-      }
-    } else {
-      // Try parsing as String
-      date = new Date(trimmed);
-    }
-
-    // Check if valid date
-    if (date && !isNaN(date.getTime())) {
-      // Additional safety check for extreme dates that might cause issues with toISOString
-      try {
-        date.toISOString();
-        return date;
-      } catch {
-        return null;
-      }
-    }
-
-    return null;
+    return lines.map((line) => ({
+      original: line,
+      date: parseDateInput(line),
+    }));
   }, [input]);
 
   const copyToClipboard = (text: string, field: string) => {
@@ -112,32 +122,30 @@ const EpochConverter: React.FC = () => {
     setTimeout(() => setCopiedField(null), 2000);
   };
 
-  const outputValues = (() => {
-    if (!parsedDate) return [];
-
+  const getSingleOutputValues = (date: Date) => {
     return [
       {
         label: t('epochConverter.timestampSeconds'),
-        value: Math.floor(parsedDate.getTime() / 1000).toString(),
+        value: Math.floor(date.getTime() / 1000).toString(),
       },
       {
         label: t('epochConverter.timestampMillis'),
-        value: parsedDate.getTime().toString(),
+        value: date.getTime().toString(),
       },
       {
         label: t('epochConverter.iso8601'),
-        value: parsedDate.toISOString(),
+        value: date.toISOString(),
       },
       {
         label: t('epochConverter.local'),
-        value: formatLocalTime(parsedDate, timeZone),
+        value: formatLocalTime(date, timeZone),
       },
       {
         label: t('epochConverter.relative'),
-        value: getRelativeTime(parsedDate, currentUnixTime * 1000),
+        value: getRelativeTime(date, currentUnixTime * 1000),
       },
     ];
-  })();
+  };
 
   return (
     <div className="mx-auto max-w-6xl p-6">
@@ -181,11 +189,12 @@ const EpochConverter: React.FC = () => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder={t('epochConverter.inputPlaceholder')}
-              className="h-48 w-full resize-none rounded-lg border border-gray-300 bg-gray-50 p-4 font-mono text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              className="h-96 w-full resize-none rounded-lg border border-gray-300 bg-gray-50 p-4 font-mono text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
               spellCheck={false}
             />
             <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
               <p>Supports: Unix timestamp (seconds, ms, μs, ns), ISO 8601, Date strings</p>
+              <p className="mt-1 text-xs opacity-75">One per line for batch conversion</p>
             </div>
             <div className="mt-4 flex gap-2">
               <button
@@ -217,9 +226,69 @@ const EpochConverter: React.FC = () => {
               {t('epochConverter.output')}
             </h3>
 
-            {parsedDate ? (
+            {parsedResults.length > 1 ? (
+              // Batch View
+              <div className="flex max-h-[600px] flex-col gap-3 overflow-y-auto pr-2">
+                {parsedResults.map((res, index) => (
+                  <div
+                    key={index}
+                    className="rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm dark:border-gray-600 dark:bg-gray-700/50"
+                  >
+                    <div className="mb-2 flex items-center justify-between border-b border-gray-200 pb-2 dark:border-gray-600">
+                      <span className="mr-2 font-mono text-xs break-all text-gray-500 dark:text-gray-400">
+                        {res.original}
+                      </span>
+                      {res.date && (
+                        <button
+                          onClick={() =>
+                            copyToClipboard(res.date?.toISOString() || '', `iso-${index}`)
+                          }
+                          className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                          title="Copy ISO"
+                        >
+                          {copiedField === `iso-${index}` ? (
+                            <Check className="h-3 w-3 text-green-500" />
+                          ) : (
+                            <Copy className="h-3 w-3" />
+                          )}
+                        </button>
+                      )}
+                    </div>
+                    {res.date ? (
+                      <div className="grid gap-1">
+                        <div className="flex flex-col sm:flex-row sm:justify-between">
+                          <span className="w-16 text-xs text-gray-500 dark:text-gray-400">ISO</span>
+                          <span className="truncate font-mono text-sm text-gray-900 dark:text-gray-200">
+                            {res.date.toISOString()}
+                          </span>
+                        </div>
+                        <div className="flex flex-col sm:flex-row sm:justify-between">
+                          <span className="w-16 text-xs text-gray-500 dark:text-gray-400">
+                            Local
+                          </span>
+                          <span className="truncate font-mono text-sm text-gray-900 dark:text-gray-200">
+                            {formatLocalTime(res.date, timeZone)}
+                          </span>
+                        </div>
+                        <div className="flex flex-col sm:flex-row sm:justify-between">
+                          <span className="w-16 text-xs text-gray-500 dark:text-gray-400">
+                            Relative
+                          </span>
+                          <span className="font-mono text-xs text-gray-500 dark:text-gray-400">
+                            {getRelativeTime(res.date, currentUnixTime * 1000)}
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <span className="text-sm font-medium text-red-500">Invalid Date</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : parsedResults.length === 1 && parsedResults[0].date ? (
+              // Single View
               <div className="space-y-4">
-                {outputValues.map((item, idx) => (
+                {getSingleOutputValues(parsedResults[0].date).map((item, idx) => (
                   <div key={idx} className="group">
                     <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">
                       {item.label}
@@ -244,6 +313,7 @@ const EpochConverter: React.FC = () => {
                 ))}
               </div>
             ) : (
+              // Empty or Invalid Single View
               <div className="flex h-64 items-center justify-center rounded-lg border border-dashed border-gray-300 p-8 text-center text-gray-500 dark:border-gray-600 dark:text-gray-400">
                 Invalid Date or Timestamp
               </div>
