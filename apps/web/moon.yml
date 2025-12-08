@@ -16,6 +16,7 @@ tasks:
   lint:
     command: 'bun run lint'
     deps:
+      - 'format'
       - 'typecheck'
     inputs:
       - 'src/**/*'
