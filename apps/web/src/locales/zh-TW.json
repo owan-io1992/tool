@@ -42,5 +42,27 @@
     "simple": "簡易",
     "medium": "中等",
     "high": "高強"
+  },
+  "cidr": {
+    "title": "CIDR 計算器",
+    "inputLabel": "網路輸入",
+    "placeholder": "輸入 IP 範圍 (如 10.0.0.1-10.0.0.5) 或 CIDR (如 10.0.0.0/24, 2001:db8::/32)",
+    "outputLabel": "IP 資訊",
+    "startIp": "起始 IP",
+    "endIp": "結束 IP",
+    "netmask": "網路遮罩",
+    "totalHosts": "主機總數",
+    "broadcast": "廣播位址",
+    "ipVersion": "IP 版本",
+    "type": "類型",
+    "typeCIDR": "CIDR",
+    "typeRange": "範圍",
+    "errorInvalid": "無效的格式",
+    "address": "IP 位址",
+    "wildcard": "萬用字元遮罩",
+    "network": "網路位址",
+    "hostMin": "最小主機 IP",
+    "hostMax": "最大主機 IP",
+    "hostsNet": "Hosts"
   }
 }
