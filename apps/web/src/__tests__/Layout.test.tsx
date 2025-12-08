@@ -33,7 +33,7 @@ describe('Layout Component', () => {
 
   it('renders the app title', () => {
     renderWithRouterAndI18n(<Layout />);
-    expect(screen.getByText('Tool App')).toBeDefined();
+    expect(screen.getByText('Tool box')).toBeDefined();
   });
 
   it('renders menu items', () => {
@@ -53,7 +53,7 @@ describe('Layout Component', () => {
 
     const enButton = screen.getByText('EN');
     fireEvent.click(enButton);
-    expect(await screen.findByText('Tool App')).toBeDefined();
+    expect(await screen.findByText('Tool box')).toBeDefined();
     expect(screen.getByText('Password')).toBeDefined();
   });
 });
