@@ -64,5 +64,17 @@
     "hostMin": "HostMin",
     "hostMax": "HostMax",
     "hostsNet": "Hosts"
+  },
+  "epochConverter": {
+    "title": "Epoch Converter",
+    "timezone": "Time Zone",
+    "input": "Input",
+    "output": "Output",
+    "inputPlaceholder": "Enter Unix timestamp or Date string",
+    "timestampSeconds": "Timestamp (Seconds)",
+    "timestampMillis": "Timestamp (Milliseconds)",
+    "iso8601": "ISO 8601",
+    "local": "Local Time",
+    "relative": "Relative"
   }
 }

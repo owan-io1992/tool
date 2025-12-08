@@ -64,5 +64,17 @@
     "hostMin": "最小主機 IP",
     "hostMax": "最大主機 IP",
     "hostsNet": "Hosts"
+  },
+  "epochConverter": {
+    "title": "Epoch 轉換器",
+    "timezone": "時區",
+    "input": "輸入",
+    "output": "輸出",
+    "inputPlaceholder": "輸入 Unix 時間戳或日期字串",
+    "timestampSeconds": "時間戳 (秒)",
+    "timestampMillis": "時間戳 (毫秒)",
+    "iso8601": "ISO 8601",
+    "local": "本地時間",
+    "relative": "相對時間"
   }
 }
