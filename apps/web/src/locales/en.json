@@ -42,5 +42,27 @@
     "simple": "Simple",
     "medium": "Medium",
     "high": "High"
+  },
+  "cidr": {
+    "title": "CIDR Calculator",
+    "inputLabel": "Network Input",
+    "placeholder": "Enter IP Range (e.g. 10.0.0.1-10.0.0.5) or CIDR (e.g. 10.0.0.0/24, 2001:db8::/32)",
+    "outputLabel": "IP Information",
+    "startIp": "Start IP",
+    "endIp": "End IP",
+    "netmask": "Netmask",
+    "totalHosts": "Total Hosts",
+    "broadcast": "Broadcast Address",
+    "ipVersion": "IP Version",
+    "type": "Type",
+    "typeCIDR": "CIDR",
+    "typeRange": "Range",
+    "errorInvalid": "Invalid Format",
+    "address": "Address",
+    "wildcard": "Wildcard",
+    "network": "Network",
+    "hostMin": "HostMin",
+    "hostMax": "HostMax",
+    "hostsNet": "Hosts"
   }
 }
