@@ -9,5 +9,4 @@ done
 # https://moonrepo.dev/docs/guides/vcs-hooks
 
 moon run :lint --affected
-moon run :format --affected
 
