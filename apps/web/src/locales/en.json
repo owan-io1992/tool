@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "Tool App"
+    "title": "Tool box"
   },
   "menu": {
     "password": "Password",
@@ -12,7 +12,7 @@
     "epochConverter": "Converter"
   },
   "home": {
-    "welcome": "Welcome to Tool App",
+    "welcome": "Welcome to Tool box",
     "description": "A collection of useful developer tools",
     "passwordDesc": "Generate secure passwords and check for leaks",
     "networkDesc": "Calculate CIDR and other network utilities",
