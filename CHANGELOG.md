@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Updated navigation bar terminology in English: "Password" to "Secret", "Generator" to "Password Generator", "Epoch" to "Time", "Converter" to "Epoch convertor".
+- Updated base url to root path '/'
 
 ## [0.0.2] - 2025-12-14
 
