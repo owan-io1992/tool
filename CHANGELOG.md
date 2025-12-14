@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.2] - 2025-12-14
+
+### Added
+- Added a "Client-Side Only" notice on the Home page to reassure users about data privacy and security (100% browser-based).
+- Added a GitHub repository link to the sidebar footer for easy access to source code.
+
 ### Changed
 - Standardized page title styling across all tools (Home, Epoch Converter, CIDR Calculator, Password Generator) for consistency (left-aligned, default Mantine styling).
 - Refactored `PasswordGenerator` layout to use standard Mantine components (`Grid`, `Paper`) to fix dark mode background issues and improve responsiveness.
