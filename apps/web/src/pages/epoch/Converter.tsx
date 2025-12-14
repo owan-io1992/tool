@@ -1,6 +1,22 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Copy, Check, Clock, Globe } from 'lucide-react';
+import {
+  Container,
+  Select,
+  Textarea,
+  Button,
+  Group,
+  Stack,
+  Paper,
+  Text,
+  ActionIcon,
+  ThemeIcon,
+  Grid,
+  Code,
+  ScrollArea,
+  Title,
+} from '@mantine/core';
 
 const formatLocalTime = (date: Date, tz: string) => {
   try {
@@ -148,205 +164,213 @@ const EpochConverter: React.FC = () => {
   };
 
   return (
-    <div className="mx-auto max-w-6xl p-6">
-      <div className="mb-8 flex items-center justify-between">
-        <h2 className="bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-3xl font-bold text-transparent">
+    <Container size="xl" py="lg">
+      <Group justify="space-between" mb="lg">
+        <Title order={2} size="h1" fw={900}>
           {t('epochConverter.title')}
-        </h2>
+        </Title>
 
-        {/* Timezone Selector - Top Right */}
-        <div className="flex items-center gap-2">
-          <Globe className="h-5 w-5 text-gray-500" />
-          <label className="mr-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-            {t('epochConverter.timezone')}:
-          </label>
-          <select
+        <Group>
+          <ThemeIcon variant="light" color="gray" size="md">
+            <Globe size={18} />
+          </ThemeIcon>
+          <Select
             value={timeZone}
-            onChange={(e) => setTimeZone(e.target.value)}
-            className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-          >
-            {timeZones.map((tz) => (
-              <option key={tz} value={tz}>
-                {tz}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
+            onChange={(val) => setTimeZone(val || 'UTC')}
+            data={timeZones}
+            searchable
+            placeholder={t('epochConverter.timezone')}
+            style={{ width: 250 }}
+          />
+        </Group>
+      </Group>
 
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+      <Grid gutter="xl">
         {/* Left Column: Input */}
-        <div className="flex flex-col gap-4">
-          <div className="h-full rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-            <div className="mb-4 flex items-center gap-2">
-              <Clock className="h-5 w-5 text-blue-500" />
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
-                {t('epochConverter.input')}
-              </h3>
-            </div>
+        <Grid.Col span={{ base: 12, md: 6 }}>
+          <Paper withBorder p="md" radius="md" h="100%">
+            <Stack>
+              <Group>
+                <ThemeIcon variant="light" size="lg">
+                  <Clock size={20} />
+                </ThemeIcon>
+                <Text component="h3" size="lg" fw={600}>
+                  {t('epochConverter.input')}
+                </Text>
+              </Group>
 
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder={t('epochConverter.inputPlaceholder')}
-              className="h-96 w-full resize-none rounded-lg border border-gray-300 bg-gray-50 p-4 font-mono text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-              spellCheck={false}
-            />
-            <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
-              <p>Supports: Unix timestamp (seconds, ms, μs, ns), ISO 8601, Date strings</p>
-              <p className="mt-1 text-xs opacity-75">One per line for batch conversion</p>
-            </div>
-            <div className="mt-4 flex gap-2">
-              <button
-                onClick={() => setInput(Math.floor(Date.now() / 1000).toString())}
-                className="rounded-lg bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50"
-              >
-                Now (Sec)
-              </button>
-              <button
-                onClick={() => setInput(Date.now().toString())}
-                className="rounded-lg bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50"
-              >
-                Now (Ms)
-              </button>
-              <button
-                onClick={() => setInput(new Date().toISOString())}
-                className="rounded-lg bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50"
-              >
-                Now (ISO)
-              </button>
-            </div>
-          </div>
-        </div>
+              <Textarea
+                value={input}
+                onChange={(e) => setInput(e.currentTarget.value)}
+                placeholder={t('epochConverter.inputPlaceholder')}
+                minRows={12}
+                maxRows={20}
+                styles={{ input: { fontFamily: 'monospace' } }}
+              />
+
+              <Stack gap="xs">
+                <Text size="sm" c="dimmed">
+                  Supports: Unix timestamp (seconds, ms, μs, ns), ISO 8601, Date strings
+                </Text>
+                <Text size="xs" c="dimmed" fs="italic">
+                  One per line for batch conversion
+                </Text>
+              </Stack>
+
+              <Group gap="xs">
+                <Button
+                  variant="light"
+                  size="xs"
+                  onClick={() => setInput(Math.floor(Date.now() / 1000).toString())}
+                >
+                  Now (Sec)
+                </Button>
+                <Button variant="light" size="xs" onClick={() => setInput(Date.now().toString())}>
+                  Now (Ms)
+                </Button>
+                <Button
+                  variant="light"
+                  size="xs"
+                  onClick={() => setInput(new Date().toISOString())}
+                >
+                  Now (ISO)
+                </Button>
+              </Group>
+            </Stack>
+          </Paper>
+        </Grid.Col>
 
         {/* Right Column: Output */}
-        <div className="flex flex-col gap-4">
-          <div className="h-full rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-            <h3 className="mb-4 text-xl font-semibold text-gray-800 dark:text-white">
+        <Grid.Col span={{ base: 12, md: 6 }}>
+          <Paper withBorder p="md" radius="md" h="100%">
+            <Text component="h3" size="lg" fw={600} mb="md">
               {t('epochConverter.output')}
-            </h3>
+            </Text>
 
             {parsedResults.length > 1 ? (
               // Batch View
-              <div className="flex max-h-[600px] flex-col gap-3 overflow-y-auto pr-2">
-                {parsedResults.map((res, index) => (
-                  <div
-                    key={index}
-                    className="rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm dark:border-gray-600 dark:bg-gray-700/50"
-                  >
-                    <div className="mb-2 flex items-center justify-between border-b border-gray-200 pb-2 dark:border-gray-600">
-                      <span className="mr-2 font-mono text-xs break-all text-gray-500 dark:text-gray-400">
-                        {res.original}
-                      </span>
-                      {res.date && (
-                        <button
-                          onClick={() =>
-                            copyToClipboard(res.date?.toISOString() || '', `iso-${index}`)
-                          }
-                          className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
-                          title="Copy ISO"
-                        >
-                          {copiedField === `iso-${index}` ? (
-                            <Check className="h-3 w-3 text-green-500" />
-                          ) : (
-                            <Copy className="h-3 w-3" />
-                          )}
-                        </button>
+              <ScrollArea h={600} offsetScrollbars>
+                <Stack gap="sm">
+                  {parsedResults.map((res, index) => (
+                    <Paper key={index} withBorder p="sm" bg="var(--mantine-color-gray-0)">
+                      <Group justify="space-between" mb="xs">
+                        <Code>{res.original}</Code>
+                        {res.date && (
+                          <ActionIcon
+                            variant="subtle"
+                            color={copiedField === `iso-${index}` ? 'teal' : 'gray'}
+                            onClick={() =>
+                              copyToClipboard(res.date?.toISOString() || '', `iso-${index}`)
+                            }
+                          >
+                            {copiedField === `iso-${index}` ? (
+                              <Check size={16} />
+                            ) : (
+                              <Copy size={16} />
+                            )}
+                          </ActionIcon>
+                        )}
+                      </Group>
+
+                      {res.date ? (
+                        <Stack gap={4}>
+                          <Group justify="space-between" align="start">
+                            <Text size="xs" c="dimmed" w={60}>
+                              ISO
+                            </Text>
+                            <Text size="sm" style={{ fontFamily: 'monospace' }}>
+                              {res.date.toISOString()}
+                            </Text>
+                          </Group>
+                          <Group justify="space-between" align="start">
+                            <Text size="xs" c="dimmed" w={60}>
+                              Local
+                            </Text>
+                            <Text size="sm" style={{ fontFamily: 'monospace' }}>
+                              {formatLocalTime(res.date, timeZone)}
+                            </Text>
+                          </Group>
+                          <Group justify="space-between" align="start">
+                            <Text size="xs" c="dimmed" w={60}>
+                              Relative
+                            </Text>
+                            <Text size="xs" c="dimmed">
+                              {getRelativeTime(res.date, currentUnixTime * 1000)}
+                            </Text>
+                          </Group>
+                        </Stack>
+                      ) : (
+                        <Text c="red" size="sm" fw={500}>
+                          Invalid Date
+                        </Text>
                       )}
-                    </div>
-                    {res.date ? (
-                      <div className="grid gap-1">
-                        <div className="flex flex-col sm:flex-row sm:justify-between">
-                          <span className="w-16 text-xs text-gray-500 dark:text-gray-400">ISO</span>
-                          <span className="truncate font-mono text-sm text-gray-900 dark:text-gray-200">
-                            {res.date.toISOString()}
-                          </span>
-                        </div>
-                        <div className="flex flex-col sm:flex-row sm:justify-between">
-                          <span className="w-16 text-xs text-gray-500 dark:text-gray-400">
-                            Local
-                          </span>
-                          <span className="truncate font-mono text-sm text-gray-900 dark:text-gray-200">
-                            {formatLocalTime(res.date, timeZone)}
-                          </span>
-                        </div>
-                        <div className="flex flex-col sm:flex-row sm:justify-between">
-                          <span className="w-16 text-xs text-gray-500 dark:text-gray-400">
-                            Relative
-                          </span>
-                          <span className="font-mono text-xs text-gray-500 dark:text-gray-400">
-                            {getRelativeTime(res.date, currentUnixTime * 1000)}
-                          </span>
-                        </div>
-                      </div>
-                    ) : (
-                      <span className="text-sm font-medium text-red-500">Invalid Date</span>
-                    )}
-                  </div>
-                ))}
-              </div>
+                    </Paper>
+                  ))}
+                </Stack>
+              </ScrollArea>
             ) : parsedResults.length === 1 && parsedResults[0].date ? (
               // Single View
-              <div className="space-y-4">
+              <Stack gap="md">
                 {getSingleOutputValues(parsedResults[0].date).map((item, idx) => (
-                  <div key={idx} className="group">
-                    <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">
+                  <div key={idx}>
+                    <Text size="xs" fw={500} c="dimmed" mb={4}>
                       {item.label}
-                    </label>
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 rounded-lg bg-gray-50 p-3 font-mono text-sm break-all text-gray-900 dark:bg-gray-700 dark:text-white">
+                    </Text>
+                    <Group gap="xs" wrap="nowrap">
+                      <Code block style={{ flex: 1, padding: '8px' }}>
                         {item.value}
-                      </div>
-                      <button
+                      </Code>
+                      <ActionIcon
+                        variant="subtle"
+                        size="lg"
+                        color={copiedField === item.label ? 'teal' : 'gray'}
                         onClick={() => copyToClipboard(item.value, item.label)}
-                        className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-600 dark:hover:text-gray-200"
-                        title={t('epochConverter.copy')}
                       >
-                        {copiedField === item.label ? (
-                          <Check className="h-5 w-5 text-green-500" />
-                        ) : (
-                          <Copy className="h-5 w-5" />
-                        )}
-                      </button>
-                    </div>
+                        {copiedField === item.label ? <Check size={20} /> : <Copy size={20} />}
+                      </ActionIcon>
+                    </Group>
                   </div>
                 ))}
-              </div>
+              </Stack>
             ) : (
               // Empty or Invalid Single View
-              <div className="flex h-64 items-center justify-center rounded-lg border border-dashed border-gray-300 p-8 text-center text-gray-500 dark:border-gray-600 dark:text-gray-400">
-                Invalid Date or Timestamp
-              </div>
+              <Stack
+                align="center"
+                justify="center"
+                h={300}
+                style={{ border: '2px dashed var(--mantine-color-gray-3)', borderRadius: '8px' }}
+              >
+                <Text c="dimmed">Invalid Date or Timestamp</Text>
+              </Stack>
             )}
-          </div>
-        </div>
-      </div>
+          </Paper>
+        </Grid.Col>
+      </Grid>
 
       {/* Current Unix Time Footer */}
-      <div className="mt-8 text-center">
-        <div className="inline-flex flex-col items-center justify-center rounded-xl bg-gray-100 px-8 py-4 dark:bg-gray-800">
-          <div className="mb-1 text-sm font-medium text-gray-500 dark:text-gray-400">
-            Current Unix Time
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="font-mono text-3xl font-bold text-gray-900 dark:text-blue-400">
-              {currentUnixTime}
-            </div>
-            <button
-              onClick={() => copyToClipboard(currentUnixTime.toString(), 'currentUnixTime')}
-              className="rounded-lg p-2 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-200"
-              title={t('epochConverter.copy')}
-            >
-              {copiedField === 'currentUnixTime' ? (
-                <Check className="h-6 w-6 text-green-500" />
-              ) : (
-                <Copy className="h-6 w-6" />
-              )}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+      <Stack align="center" mt={50}>
+        <Paper p="xl" radius="lg" withBorder>
+          <Stack align="center" gap="xs">
+            <Text size="xl" fw={800}>
+              Current Unix Time
+            </Text>
+            <Group>
+              <Text size="xl" fw={700} style={{ fontFamily: 'monospace', fontSize: '2rem' }}>
+                {currentUnixTime}
+              </Text>
+              <ActionIcon
+                variant="subtle"
+                size="xl"
+                color={copiedField === 'currentUnixTime' ? 'teal' : 'gray'}
+                onClick={() => copyToClipboard(currentUnixTime.toString(), 'currentUnixTime')}
+              >
+                {copiedField === 'currentUnixTime' ? <Check size={24} /> : <Copy size={24} />}
+              </ActionIcon>
+            </Group>
+          </Stack>
+        </Paper>
+      </Stack>
+    </Container>
   );
 };
 

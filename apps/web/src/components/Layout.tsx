@@ -1,174 +1,131 @@
-import React, { useState } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Lock, Network, Clock, ChevronDown, ChevronRight, Globe, Sun, Moon } from 'lucide-react';
-import { useTheme } from '../hooks/useTheme';
-
-interface MenuItem {
-  id: string;
-  label: string;
-  icon?: React.ReactNode;
-  path?: string;
-  children?: MenuItem[];
-}
+import { Lock, Network, Clock, Sun, Moon, Home, Menu } from 'lucide-react';
+import { Group, ActionIcon, rem, useMantineColorScheme, ScrollArea, Code } from '@mantine/core';
+import { LinksGroup } from './NavbarLinksGroup';
+import classes from './Layout.module.css';
+import packageJson from '../../package.json';
 
 const Layout: React.FC = () => {
   const { t, i18n } = useTranslation();
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const location = useLocation();
-  const { theme, toggleTheme } = useTheme();
-  const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
 
-  const menuItems: MenuItem[] = [
-    {
-      id: 'password',
-      label: t('menu.password'),
-      icon: <Lock size={20} />,
-      children: [
-        {
-          id: 'password-generator',
-          label: t('menu.passwordGenerator'),
-          path: '/password/generator',
-        },
-        { id: 'password-leak', label: t('menu.passwordLeak'), path: '/password/leak' },
-      ],
-    },
-    {
-      id: 'network',
-      label: t('menu.network'),
-      icon: <Network size={20} />,
-      children: [{ id: 'cidr-calculator', label: t('menu.cidrCalculator'), path: '/network/cidr' }],
-    },
-    {
-      id: 'epoch',
-      label: t('menu.epoch'),
-      icon: <Clock size={20} />,
-      children: [
-        { id: 'epoch-converter', label: t('menu.epochConverter'), path: '/epoch/converter' },
-      ],
-    },
-  ];
+  const mockdata = React.useMemo(
+    () => [
+      { label: t('home.welcome'), icon: Home, link: '/' },
+      {
+        label: t('menu.password'),
+        icon: Lock,
+        links: [{ label: t('menu.passwordGenerator'), link: '/password/generator' }],
+      },
+      {
+        label: t('menu.network'),
+        icon: Network,
+        links: [{ label: t('menu.cidrCalculator'), link: '/network/cidr' }],
+      },
+      {
+        label: t('menu.epoch'),
+        icon: Clock,
+        links: [{ label: t('menu.epochConverter'), link: '/epoch/converter' }],
+      },
+    ],
+    [t],
+  );
 
-  const toggleMenu = (id: string) => {
-    setExpandedMenus((prev) => {
-      // If clicking already open menu, close it
-      if (prev.includes(id)) {
-        return [];
-      }
-      // Otherwise close all others and open this one
-      return [id];
-    });
-  };
+  // Initialize openedGroup based on current route
+  const [openedGroup, setOpenedGroup] = useState<string | null>(() => {
+    const foundGroup = mockdata.find((item) =>
+      item.links?.some((link) => location.pathname.startsWith(link.link)),
+    );
+    return foundGroup ? foundGroup.label : null;
+  });
+
+  // Update openedGroup when location changes (optional, keeps sidebar synced)
+  useEffect(() => {
+    const foundGroup = mockdata.find((item) =>
+      item.links?.some((link) => location.pathname.startsWith(link.link)),
+    );
+    if (foundGroup && foundGroup.label !== openedGroup) {
+      // Use functional update or standard, but check if different first
+      setOpenedGroup(foundGroup.label);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname, mockdata]);
+
+  const links = mockdata.map((item) => (
+    <LinksGroup
+      key={item.label}
+      {...item}
+      opened={openedGroup === item.label}
+      onToggle={() => setOpenedGroup((prev) => (prev === item.label ? null : item.label))}
+    />
+  ));
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
   };
 
   return (
-    <div className="flex h-screen bg-amber-50/30 transition-colors duration-200 dark:bg-slate-900">
-      {/* Sidebar */}
-      <div className="flex w-64 flex-col border-r border-amber-100 bg-white shadow-md transition-colors duration-200 dark:border-slate-700 dark:bg-slate-800">
-        <div className="border-b border-amber-100 p-4 dark:border-slate-700">
-          <Link
-            to="/"
-            className="text-xl font-bold text-amber-900 transition-colors hover:text-amber-700 dark:text-amber-500 dark:hover:text-amber-400"
-          >
-            {t('app.title')}
-          </Link>
+    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+      <nav className={classes.navbar}>
+        <div className={classes.header}>
+          <Group justify="space-between">
+            <Group gap="xs">
+              <Menu size={24} />
+              <Code fw={700}>v{packageJson.version}</Code>
+            </Group>
+          </Group>
         </div>
 
-        <nav className="flex-1 overflow-y-auto p-4">
-          <ul>
-            {menuItems.map((item) => (
-              <li key={item.id} className="mb-2">
-                <div
-                  className={`flex cursor-pointer items-center justify-between rounded p-2 transition-colors ${
-                    expandedMenus.includes(item.id)
-                      ? 'bg-amber-50 text-amber-900 dark:bg-slate-700 dark:text-amber-400'
-                      : 'text-gray-700 hover:bg-amber-50/50 hover:text-amber-800 dark:text-slate-300 dark:hover:bg-slate-700/50 dark:hover:text-amber-400'
-                  }`}
-                  onClick={() => (item.children ? toggleMenu(item.id) : null)}
-                >
-                  <div className="flex items-center gap-3">
-                    {item.icon}
-                    <span className="font-medium">{item.label}</span>
-                  </div>
-                  {item.children &&
-                    (expandedMenus.includes(item.id) ? (
-                      <ChevronDown size={16} />
-                    ) : (
-                      <ChevronRight size={16} />
-                    ))}
-                </div>
+        <ScrollArea className={classes.links}>
+          <div className={classes.linksInner}>{links}</div>
+        </ScrollArea>
 
-                {item.children && expandedMenus.includes(item.id) && (
-                  <ul className="mt-1 ml-9 space-y-1">
-                    {item.children.map((child) => (
-                      <li key={child.id}>
-                        <Link
-                          to={child.path || '#'}
-                          className={`block rounded p-2 text-sm transition-colors ${
-                            location.pathname === child.path
-                              ? 'bg-amber-100 font-medium text-amber-900 dark:bg-slate-700 dark:text-amber-400'
-                              : 'text-gray-600 hover:bg-amber-50 hover:text-amber-800 dark:text-slate-400 dark:hover:bg-slate-700/50 dark:hover:text-amber-400'
-                          }`}
-                        >
-                          {child.label}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        {/* Language Switcher & Theme Toggle */}
-        <div className="border-t border-amber-100 bg-amber-50/30 p-4 dark:border-slate-700 dark:bg-slate-900/30">
-          {/* Theme Toggle */}
-          <button
-            onClick={toggleTheme}
-            className="mb-4 flex w-full items-center justify-center gap-2 rounded border border-gray-200 bg-white p-2 text-gray-700 transition-colors hover:bg-gray-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
-          >
-            {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
-            <span className="text-sm">{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
-          </button>
-
-          <div className="mb-2 flex items-center gap-2 text-sm text-gray-600 dark:text-slate-400">
-            <Globe size={16} />
-            <span>{t('common.language')}</span>
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => changeLanguage('en')}
-              className={`rounded border px-3 py-1 text-xs transition-colors ${
-                i18n.language === 'en'
-                  ? 'border-amber-600 bg-amber-600 text-white'
-                  : 'border-gray-300 bg-white text-gray-600 hover:bg-amber-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
-              }`}
+        <div className={classes.footer}>
+          <Group justify="space-between" align="center">
+            <ActionIcon
+              variant="default"
+              onClick={() => toggleColorScheme()}
+              size="lg"
+              aria-label="Toggle color scheme"
             >
-              EN
-            </button>
-            <button
-              onClick={() => changeLanguage('zh-TW')}
-              className={`rounded border px-3 py-1 text-xs transition-colors ${
-                i18n.language === 'zh-TW'
-                  ? 'border-amber-600 bg-amber-600 text-white'
-                  : 'border-gray-300 bg-white text-gray-600 hover:bg-amber-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
-              }`}
-            >
-              繁中
-            </button>
-          </div>
+              {colorScheme === 'dark' ? (
+                <Sun style={{ width: rem(18), height: rem(18) }} />
+              ) : (
+                <Moon style={{ width: rem(18), height: rem(18) }} />
+              )}
+            </ActionIcon>
+
+            <Group gap={5}>
+              <ActionIcon
+                variant={i18n.language === 'en' ? 'filled' : 'default'}
+                onClick={() => changeLanguage('en')}
+                size="lg"
+                color="blue"
+              >
+                <code style={{ fontSize: rem(12), fontWeight: 700 }}>EN</code>
+              </ActionIcon>
+              <ActionIcon
+                variant={i18n.language === 'zh-TW' ? 'filled' : 'default'}
+                onClick={() => changeLanguage('zh-TW')}
+                size="lg"
+                color="blue"
+              >
+                <code style={{ fontSize: rem(12), fontWeight: 700 }}>繁</code>
+              </ActionIcon>
+            </Group>
+          </Group>
         </div>
-      </div>
+      </nav>
 
-      {/* Main Content */}
-      <div className="flex-1 overflow-auto">
-        <div className="p-8">
+      {/* Main Content Area */}
+      <main style={{ flex: 1, overflowY: 'auto', backgroundColor: 'var(--mantine-color-body)' }}>
+        <div style={{ padding: '2rem' }}>
           <Outlet />
         </div>
-      </div>
+      </main>
     </div>
   );
 };

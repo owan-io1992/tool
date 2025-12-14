@@ -1,47 +1,69 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Shield, Network, Clock } from 'lucide-react';
+import { Container, Title, Text, SimpleGrid, Card, Group, ThemeIcon, rem } from '@mantine/core';
 
 const Home: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="mx-auto max-w-4xl">
-      <div className="mb-12 text-center">
-        <h1 className="mb-4 text-4xl font-bold text-amber-900 transition-colors dark:text-amber-500">
+    <Container size="lg" py="xl">
+      <div style={{ textAlign: 'center', marginBottom: rem(50) }}>
+        <Title order={1} mb="md" fw={900} style={{ fontSize: rem(42), lineHeight: 1.2 }}>
           {t('home.welcome')}
-        </h1>
-        <p className="text-xl text-amber-800 transition-colors dark:text-slate-300">
+        </Title>
+        <Text size="xl" c="dimmed" maw={600} mx="auto">
           {t('home.description')}
-        </p>
+        </Text>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <div className="rounded-lg border border-amber-100 bg-amber-50 p-6 shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800">
-          <div className="mb-3 flex items-center gap-3 text-amber-700 dark:text-amber-400">
-            <Shield size={24} />
-            <h3 className="text-lg font-semibold">{t('menu.password')}</h3>
-          </div>
-          <p className="text-amber-900/70 dark:text-slate-400">{t('home.passwordDesc')}</p>
-        </div>
+      <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="xl">
+        <Card shadow="sm" padding="lg" radius="md" withBorder>
+          <Card.Section withBorder inheritPadding py="xs">
+            <Group>
+              <ThemeIcon size="lg" variant="light" color="orange">
+                <Shield style={{ width: rem(20), height: rem(20) }} />
+              </ThemeIcon>
+              <Text fw={500}>{t('menu.password')}</Text>
+            </Group>
+          </Card.Section>
 
-        <div className="rounded-lg border border-amber-100 bg-amber-50 p-6 shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800">
-          <div className="mb-3 flex items-center gap-3 text-amber-700 dark:text-amber-400">
-            <Network size={24} />
-            <h3 className="text-lg font-semibold">{t('menu.network')}</h3>
-          </div>
-          <p className="text-amber-900/70 dark:text-slate-400">{t('home.networkDesc')}</p>
-        </div>
+          <Text size="sm" c="dimmed" mt="md">
+            {t('home.passwordDesc')}
+          </Text>
+        </Card>
 
-        <div className="rounded-lg border border-amber-100 bg-amber-50 p-6 shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800">
-          <div className="mb-3 flex items-center gap-3 text-amber-700 dark:text-amber-400">
-            <Clock size={24} />
-            <h3 className="text-lg font-semibold">{t('menu.epoch')}</h3>
-          </div>
-          <p className="text-amber-900/70 dark:text-slate-400">{t('home.epochDesc')}</p>
-        </div>
-      </div>
-    </div>
+        <Card shadow="sm" padding="lg" radius="md" withBorder>
+          <Card.Section withBorder inheritPadding py="xs">
+            <Group>
+              <ThemeIcon size="lg" variant="light" color="blue">
+                <Network style={{ width: rem(20), height: rem(20) }} />
+              </ThemeIcon>
+              <Text fw={500}>{t('menu.network')}</Text>
+            </Group>
+          </Card.Section>
+
+          <Text size="sm" c="dimmed" mt="md">
+            {t('home.networkDesc')}
+          </Text>
+        </Card>
+
+        <Card shadow="sm" padding="lg" radius="md" withBorder>
+          <Card.Section withBorder inheritPadding py="xs">
+            <Group>
+              <ThemeIcon size="lg" variant="light" color="indigo">
+                <Clock style={{ width: rem(20), height: rem(20) }} />
+              </ThemeIcon>
+              <Text fw={500}>{t('menu.epoch')}</Text>
+            </Group>
+          </Card.Section>
+
+          <Text size="sm" c="dimmed" mt="md">
+            {t('home.epochDesc')}
+          </Text>
+        </Card>
+      </SimpleGrid>
+    </Container>
   );
 };
 

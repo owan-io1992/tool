@@ -1,6 +1,19 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address4, Address6 } from 'ip-address';
+import {
+  Container,
+  Title,
+  Text,
+  Grid,
+  Paper,
+  Textarea,
+  Group,
+  Stack,
+  Divider,
+  Alert,
+} from '@mantine/core';
+import { AlertCircle } from 'lucide-react';
 
 interface NetworkInfo {
   type: 'CIDR' | 'Range';
@@ -174,8 +187,6 @@ const CidrCalculator: React.FC = () => {
         const wildcard = calculateWildcard(subnetMask);
 
         // Hosts Calculation
-        // Use BigInteger for safe calculation although IPv4 fits in number, good practice
-        // For IPv4: 2^(32-mask) - 2 (except /31 and /32)
         let hostsCount = 0;
         if (cidrMask === 32) hostsCount = 1;
         else if (cidrMask === 31)
@@ -184,11 +195,6 @@ const CidrCalculator: React.FC = () => {
 
         const totalHosts = hostsCount <= 0 ? '0' : hostsCount.toLocaleString();
 
-        // HostMin/Max
-        // startAddress is usually network address, +1 for hostMin (if not /31, /32)
-        // endAddress is usually broadcast, -1 for hostMax
-
-        // We need to parse start/end manually to adjust for Min/Max
         const startAddrRaw = addr.startAddress().correctForm();
         const endAddrRaw = addr.endAddress().correctForm();
 
@@ -196,7 +202,6 @@ const CidrCalculator: React.FC = () => {
         let hostMax = endAddrRaw;
 
         if (cidrMask < 31) {
-          // Simple increment/decrement logic for IPv4 string
           const startParts = startAddrRaw.split('.').map(Number);
           startParts[3]++;
           hostMin = startParts.join('.');
@@ -210,7 +215,7 @@ const CidrCalculator: React.FC = () => {
           result: {
             type: 'CIDR',
             version: 'IPv4',
-            address: trimmed.split('/')[0], // User input IP
+            address: trimmed.split('/')[0],
             netmask: subnetMask,
             wildcard: wildcard,
             network: `${addr.startAddress().correctForm()}/${cidrMask}`,
@@ -250,136 +255,131 @@ const CidrCalculator: React.FC = () => {
     }
   }, [input]);
 
+  const InfoRow = ({
+    label,
+    value,
+    mono = false,
+  }: {
+    label: string;
+    value: React.ReactNode;
+    mono?: boolean;
+  }) => (
+    <Group justify="space-between" align="flex-start" wrap="nowrap">
+      <Text c="dimmed" size="sm" style={{ width: 100, flexShrink: 0 }}>
+        {label}:
+      </Text>
+      <Text
+        size="sm"
+        fw={500}
+        c="blue"
+        style={{
+          fontFamily: mono ? 'monospace' : undefined,
+          wordBreak: 'break-all',
+        }}
+      >
+        {value}
+      </Text>
+    </Group>
+  );
+
   return (
-    <div className="mx-auto max-w-7xl p-6">
-      <h2 className="mb-6 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-3xl font-bold text-transparent">
+    <Container size="xl" py="lg">
+      <Title order={2} size="h1" fw={900} mb="lg">
         {t('cidr.title')}
-      </h2>
+      </Title>
 
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+      <Grid gutter="xl">
         {/* Input Section */}
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-          <h3 className="mb-4 text-xl font-semibold text-gray-800 dark:text-white">
-            {t('cidr.inputLabel')}
-          </h3>
+        <Grid.Col span={{ base: 12, md: 6 }}>
+          <Paper withBorder p="md" radius="md" h="100%">
+            <Text component="h3" size="lg" fw={600} mb="xs">
+              {t('cidr.inputLabel')}
+            </Text>
+            <Text size="sm" c="dimmed" mb="md">
+              {t('cidr.placeholder')}
+            </Text>
 
-          <div className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-            {t('cidr.placeholder')}
-          </div>
-
-          <div className="mb-4">
-            <textarea
+            <Textarea
               value={input}
-              onChange={(e) => setInput(e.target.value)}
-              className="h-32 w-full resize-none rounded-lg border border-gray-300 bg-gray-50 p-2.5 font-mono text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              onChange={(e) => setInput(e.currentTarget.value)}
+              placeholder="192.168.1.0/24 or 192.168.1.1-192.168.1.254"
+              minRows={6}
+              styles={{ input: { fontFamily: 'monospace' } }}
+              mb="md"
             />
-          </div>
 
-          {error && (
-            <div className="rounded-lg bg-red-50 p-4 text-sm text-red-800 dark:bg-red-900/30 dark:text-red-300">
-              {t(error)}
-            </div>
-          )}
-        </div>
+            {error && (
+              <Alert icon={<AlertCircle size={16} />} title="Error" color="red">
+                {t(error)}
+              </Alert>
+            )}
+          </Paper>
+        </Grid.Col>
 
         {/* Output Section */}
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-          <h3 className="mb-4 text-xl font-semibold text-gray-800 dark:text-white">
-            {t('cidr.outputLabel')}
-          </h3>
+        <Grid.Col span={{ base: 12, md: 6 }}>
+          <Paper withBorder p="md" radius="md" h="100%">
+            <Text component="h3" size="lg" fw={600} mb="md">
+              {t('cidr.outputLabel')}
+            </Text>
 
-          {!result ? (
-            <div className="flex h-40 items-center justify-center rounded-xl border border-dashed border-gray-300 p-8 text-gray-500 dark:border-gray-700 dark:text-gray-400">
-              {t('cidr.placeholder')}
-            </div>
-          ) : (
-            <div className="space-y-4 font-mono text-sm text-gray-900 dark:text-gray-200">
-              <div className="grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1">
-                {/* Address */}
-                <div className="text-gray-500 dark:text-gray-400">{t('cidr.address')}:</div>
-                <div className="font-bold break-all text-blue-600 dark:text-blue-400">
-                  {result.address}
-                </div>
+            {!result ? (
+              <Stack
+                align="center"
+                justify="center"
+                h={200}
+                style={{
+                  border: '2px dashed var(--mantine-color-gray-3)',
+                  borderRadius: '8px',
+                }}
+              >
+                <Text c="dimmed">{t('cidr.placeholder')}</Text>
+              </Stack>
+            ) : (
+              <Stack gap="sm">
+                <InfoRow label={t('cidr.address')} value={result.address} mono />
 
-                {/* Netmask */}
                 {result.netmask && (
-                  <>
-                    <div className="text-gray-500 dark:text-gray-400">{t('cidr.netmask')}:</div>
-                    <div className="break-all">
-                      {result.netmask} {result.cidrMask ? `= ${result.cidrMask}` : ''}
-                    </div>
-                  </>
+                  <InfoRow
+                    label={t('cidr.netmask')}
+                    value={`${result.netmask} ${result.cidrMask ? `= ${result.cidrMask}` : ''}`}
+                    mono
+                  />
                 )}
 
-                {/* Wildcard */}
                 {result.wildcard && (
-                  <>
-                    <div className="text-gray-500 dark:text-gray-400">{t('cidr.wildcard')}:</div>
-                    <div className="break-all">{result.wildcard}</div>
-                  </>
+                  <InfoRow label={t('cidr.wildcard')} value={result.wildcard} mono />
                 )}
 
-                <div className="col-span-2 my-2 border-b border-gray-200 dark:border-gray-700"></div>
+                <Divider my="xs" />
 
-                {/* Network */}
                 {result.network && (
-                  <>
-                    <div className="text-gray-500 dark:text-gray-400">{t('cidr.network')}:</div>
-                    <div className="break-all text-blue-600 dark:text-blue-400">
-                      {result.network}
-                    </div>
-                  </>
+                  <InfoRow label={t('cidr.network')} value={result.network} mono />
                 )}
 
-                {/* Broadcast */}
                 {result.broadcast && (
-                  <>
-                    <div className="text-gray-500 dark:text-gray-400">{t('cidr.broadcast')}:</div>
-                    <div className="break-all text-blue-600 dark:text-blue-400">
-                      {result.broadcast}
-                    </div>
-                  </>
+                  <InfoRow label={t('cidr.broadcast')} value={result.broadcast} mono />
                 )}
 
-                {/* HostMin */}
                 {result.hostMin && (
-                  <>
-                    <div className="text-gray-500 dark:text-gray-400">{t('cidr.hostMin')}:</div>
-                    <div className="break-all text-blue-600 dark:text-blue-400">
-                      {result.hostMin}
-                    </div>
-                  </>
+                  <InfoRow label={t('cidr.hostMin')} value={result.hostMin} mono />
                 )}
 
-                {/* HostMax */}
                 {result.hostMax && (
-                  <>
-                    <div className="text-gray-500 dark:text-gray-400">{t('cidr.hostMax')}:</div>
-                    <div className="break-all text-blue-600 dark:text-blue-400">
-                      {result.hostMax}
-                    </div>
-                  </>
+                  <InfoRow label={t('cidr.hostMax')} value={result.hostMax} mono />
                 )}
 
-                {/* Hosts/Net */}
                 {result.totalHosts && (
-                  <>
-                    <div className="text-gray-500 dark:text-gray-400">{t('cidr.hostsNet')}:</div>
-                    <div className="text-blue-600 dark:text-blue-400">{result.totalHosts}</div>
-                  </>
+                  <InfoRow label={t('cidr.hostsNet')} value={result.totalHosts} />
                 )}
 
-                {/* Type/Version for references that might be useful */}
-                <div className="text-gray-500 dark:text-gray-400">{t('cidr.type')}:</div>
-                <div>
-                  {result.version} {result.type}
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+                <InfoRow label={t('cidr.type')} value={`${result.version} ${result.type}`} />
+              </Stack>
+            )}
+          </Paper>
+        </Grid.Col>
+      </Grid>
+    </Container>
   );
 };
 

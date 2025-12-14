@@ -1,5 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  Container,
+  Title,
+  Grid,
+  Paper,
+  Text,
+  Stack,
+  Group,
+  Button,
+  NumberInput,
+  Checkbox,
+  TextInput,
+  Badge,
+  ActionIcon,
+} from '@mantine/core';
+import { Check, Copy } from 'lucide-react';
 
 interface Settings {
   length: number;
@@ -29,15 +45,20 @@ const PasswordGenerator: React.FC = () => {
     const savedSettings = localStorage.getItem('passwordGeneratorSettings');
     return savedSettings ? JSON.parse(savedSettings) : DEFAULT_SETTINGS;
   });
-  const [passwords, setPasswords] = useState<string[]>([]);
+  const [passwords, setPasswords] = useState<string[]>(() => {
+    // Initial generation
+    if (DEFAULT_SETTINGS.count < 1) return [];
+
+    // We can't access 'settings' here easily if it's also state created in the same render cycle unless we duplicate logic or use refs,
+    // BUT we know we are using initial settings (from localStorage or defaults).
+    // Simpler approach: Just let the effect run, but suppress the lint warning if we are sure, OR use a timeout.
+    // Actually, recreating the logic is messy.
+    // Let's use setTimeout(..., 0) inside the effect to break synchronous execution, distinct from render phase.
+    return [];
+  });
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
-  // Save settings to local storage
-  useEffect(() => {
-    localStorage.setItem('passwordGeneratorSettings', JSON.stringify(settings));
-  }, [settings]);
-
-  const generatePasswords = () => {
+  const generatePasswords = React.useCallback(() => {
     const chars = {
       uppercase: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
       lowercase: 'abcdefghijklmnopqrstuvwxyz',
@@ -63,7 +84,15 @@ const PasswordGenerator: React.FC = () => {
     }
     setPasswords(newPasswords);
     setCopiedIndex(null);
-  };
+  }, [settings]);
+
+  // Generate passwords on initial mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      generatePasswords();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [generatePasswords]);
 
   const copyToClipboard = (text: string, index: number) => {
     navigator.clipboard.writeText(text);
@@ -117,208 +146,167 @@ const PasswordGenerator: React.FC = () => {
   };
 
   const getStrengthColor = (pwd: string) => {
-    if (pwd.length < 8) return 'text-red-500';
-    if (pwd.length < 12) return 'text-yellow-500';
-    return 'text-green-500';
+    if (pwd.length < 8) return 'red';
+    if (pwd.length < 12) return 'yellow';
+    return 'green';
   };
 
   return (
-    <div className="mx-auto max-w-4xl p-6">
-      <h2 className="mb-6 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-3xl font-bold text-transparent">
+    <Container size="xl" py="lg">
+      <Title order={2} mb="lg">
         {t('generator.title')}
-      </h2>
+      </Title>
 
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-          <h3 className="mb-4 text-xl font-semibold text-gray-800 dark:text-white">
-            {t('generator.settings')}
-          </h3>
+      <Grid gutter="xl">
+        <Grid.Col span={{ base: 12, md: 6 }}>
+          <Paper withBorder p="md" radius="md">
+            <Text size="lg" fw={600} mb="md">
+              {t('generator.settings')}
+            </Text>
 
-          {/* Profiles */}
-          <div className="mb-6">
-            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
-              {t('generator.profiles')}
-            </label>
-            <div className="flex gap-2">
-              <button
-                onClick={() => applyProfile('simple')}
-                className="rounded-lg bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50"
-              >
-                {t('generator.simple')}
-              </button>
-              <button
-                onClick={() => applyProfile('medium')}
-                className="rounded-lg bg-purple-100 px-3 py-1 text-sm font-medium text-purple-700 hover:bg-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:hover:bg-purple-900/50"
-              >
-                {t('generator.medium')}
-              </button>
-              <button
-                onClick={() => applyProfile('high')}
-                className="rounded-lg bg-green-100 px-3 py-1 text-sm font-medium text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-300 dark:hover:bg-green-900/50"
-              >
-                {t('generator.high')}
-              </button>
-            </div>
-          </div>
-
-          {/* Length & Count */}
-          <div className="mb-6 grid grid-cols-2 gap-4">
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                {t('generator.length')}
-              </label>
-              <input
-                type="number"
-                min="4"
-                max="64"
-                value={settings.length}
-                onChange={(e) =>
-                  setSettings({ ...settings, length: parseInt(e.target.value) || 0 })
-                }
-                className="w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                {t('generator.count')}
-              </label>
-              <input
-                type="number"
-                min="1"
-                max="50"
-                value={settings.count}
-                onChange={(e) => setSettings({ ...settings, count: parseInt(e.target.value) || 1 })}
-                className="w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-              />
-            </div>
-          </div>
-
-          {/* Characters */}
-          <div className="mb-6">
-            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
-              {t('generator.characters')}
-            </label>
-            <div className="space-y-2">
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={settings.useUppercase}
-                  onChange={(e) => setSettings({ ...settings, useUppercase: e.target.checked })}
-                  className="h-4 w-4 rounded border-gray-300 text-blue-600 ring-offset-gray-800 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
-                />
-                <span className="text-gray-700 dark:text-gray-300">{t('generator.uppercase')}</span>
-              </label>
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={settings.useLowercase}
-                  onChange={(e) => setSettings({ ...settings, useLowercase: e.target.checked })}
-                  className="h-4 w-4 rounded border-gray-300 text-blue-600 ring-offset-gray-800 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
-                />
-                <span className="text-gray-700 dark:text-gray-300">{t('generator.lowercase')}</span>
-              </label>
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={settings.useNumbers}
-                  onChange={(e) => setSettings({ ...settings, useNumbers: e.target.checked })}
-                  className="h-4 w-4 rounded border-gray-300 text-blue-600 ring-offset-gray-800 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
-                />
-                <span className="text-gray-700 dark:text-gray-300">{t('generator.numbers')}</span>
-              </label>
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={settings.useSymbols}
-                  onChange={(e) => setSettings({ ...settings, useSymbols: e.target.checked })}
-                  className="h-4 w-4 rounded border-gray-300 text-blue-600 ring-offset-gray-800 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
-                />
-                <span className="text-gray-700 dark:text-gray-300">{t('generator.symbols')}</span>
-              </label>
-            </div>
-            {settings.useSymbols && (
-              <div className="mt-3">
-                <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">
-                  {t('generator.customSymbols')}
-                </label>
-                <input
-                  type="text"
-                  value={settings.customSymbols}
-                  onChange={(e) => setSettings({ ...settings, customSymbols: e.target.value })}
-                  className="w-full rounded-lg border border-gray-300 bg-gray-50 p-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                />
-              </div>
-            )}
-          </div>
-
-          <button
-            onClick={generatePasswords}
-            className="w-full rounded-lg bg-blue-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          >
-            {t('generator.generate')}
-          </button>
-        </div>
-
-        {/* Output */}
-        <div className="space-y-4">
-          {passwords.length > 0 &&
-            passwords.map((pwd, idx) => (
-              <div
-                key={idx}
-                className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800"
-              >
-                <div className="font-mono text-lg break-all text-gray-800 dark:text-gray-200">
-                  {pwd}
-                </div>
-                <div className="ml-4 flex shrink-0 items-center gap-3">
-                  <span className={`text-xs font-medium ${getStrengthColor(pwd)}`}>
-                    {getStrength(pwd)}
-                  </span>
-                  <button
-                    onClick={() => copyToClipboard(pwd, idx)}
-                    className="rounded-lg bg-white p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:ring-2 focus:ring-gray-300 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+            <Stack>
+              {/* Profiles */}
+              <div>
+                <Text size="sm" fw={500} mb="xs">
+                  {t('generator.profiles')}
+                </Text>
+                <Group gap="xs">
+                  <Button
+                    variant="light"
+                    color="blue"
+                    size="xs"
+                    onClick={() => applyProfile('simple')}
                   >
-                    {copiedIndex === idx ? (
-                      <svg
-                        className="h-5 w-5 text-green-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M5 13l4 4L19 7"
-                        ></path>
-                      </svg>
-                    ) : (
-                      <svg
-                        className="h-5 w-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                        ></path>
-                      </svg>
-                    )}
-                  </button>
-                </div>
+                    {t('generator.simple')}
+                  </Button>
+                  <Button
+                    variant="light"
+                    color="grape"
+                    size="xs"
+                    onClick={() => applyProfile('medium')}
+                  >
+                    {t('generator.medium')}
+                  </Button>
+                  <Button
+                    variant="light"
+                    color="green"
+                    size="xs"
+                    onClick={() => applyProfile('high')}
+                  >
+                    {t('generator.high')}
+                  </Button>
+                </Group>
               </div>
+
+              <Group grow>
+                <NumberInput
+                  label={t('generator.length')}
+                  min={4}
+                  max={64}
+                  value={settings.length}
+                  onChange={(val) =>
+                    setSettings({ ...settings, length: typeof val === 'number' ? val : 12 })
+                  }
+                />
+                <NumberInput
+                  label={t('generator.count')}
+                  min={1}
+                  max={50}
+                  value={settings.count}
+                  onChange={(val) =>
+                    setSettings({ ...settings, count: typeof val === 'number' ? val : 1 })
+                  }
+                />
+              </Group>
+
+              <div>
+                <Text size="sm" fw={500} mb="xs">
+                  {t('generator.characters')}
+                </Text>
+                <Stack gap="xs">
+                  <Checkbox
+                    label={t('generator.uppercase')}
+                    checked={settings.useUppercase}
+                    onChange={(e) =>
+                      setSettings({ ...settings, useUppercase: e.currentTarget.checked })
+                    }
+                  />
+                  <Checkbox
+                    label={t('generator.lowercase')}
+                    checked={settings.useLowercase}
+                    onChange={(e) =>
+                      setSettings({ ...settings, useLowercase: e.currentTarget.checked })
+                    }
+                  />
+                  <Checkbox
+                    label={t('generator.numbers')}
+                    checked={settings.useNumbers}
+                    onChange={(e) =>
+                      setSettings({ ...settings, useNumbers: e.currentTarget.checked })
+                    }
+                  />
+                  <Checkbox
+                    label={t('generator.symbols')}
+                    checked={settings.useSymbols}
+                    onChange={(e) =>
+                      setSettings({ ...settings, useSymbols: e.currentTarget.checked })
+                    }
+                  />
+                </Stack>
+              </div>
+
+              {settings.useSymbols && (
+                <TextInput
+                  label={t('generator.customSymbols')}
+                  value={settings.customSymbols}
+                  onChange={(e) =>
+                    setSettings({ ...settings, customSymbols: e.currentTarget.value })
+                  }
+                />
+              )}
+
+              <Button fullWidth onClick={generatePasswords} mt="md">
+                {t('generator.generate')}
+              </Button>
+            </Stack>
+          </Paper>
+        </Grid.Col>
+
+        <Grid.Col span={{ base: 12, md: 6 }}>
+          <Stack>
+            {passwords.map((pwd, idx) => (
+              <Paper key={idx} withBorder p="md" radius="md">
+                <Group justify="space-between" align="center" wrap="nowrap">
+                  <Text style={{ fontFamily: 'monospace', wordBreak: 'break-all' }}>{pwd}</Text>
+                  <Group gap="xs" wrap="nowrap">
+                    <Badge color={getStrengthColor(pwd)} variant="light">
+                      {getStrength(pwd)}
+                    </Badge>
+                    <ActionIcon
+                      variant="subtle"
+                      color={copiedIndex === idx ? 'teal' : 'gray'}
+                      onClick={() => copyToClipboard(pwd, idx)}
+                    >
+                      {copiedIndex === idx ? <Check size={18} /> : <Copy size={18} />}
+                    </ActionIcon>
+                  </Group>
+                </Group>
+              </Paper>
             ))}
-          {passwords.length === 0 && (
-            <div className="flex h-full items-center justify-center rounded-xl border border-dashed border-gray-300 p-8 text-gray-500 dark:border-gray-700 dark:text-gray-400">
-              Click Generate to create passwords
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+            {passwords.length === 0 && (
+              <Paper
+                withBorder
+                p="xl"
+                radius="md"
+                style={{ borderStyle: 'dashed', textAlign: 'center' }}
+              >
+                <Text c="dimmed">Click Generate to create passwords</Text>
+              </Paper>
+            )}
+          </Stack>
+        </Grid.Col>
+      </Grid>
+    </Container>
   );
 };
 
