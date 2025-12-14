@@ -9,4 +9,5 @@ done
 # https://moonrepo.dev/docs/guides/vcs-hooks
 
 moon run :lint --affected
+git status
 
