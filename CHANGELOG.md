@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.3] - 2025-12-14
+
 ### Added
 - Implemented settings persistence for Password Generator (settings are now saved to localStorage).
 - Added a new "Base64 Converter" tool under the Secret menu to easily encode and decode Base64 strings.
