@@ -84,6 +84,9 @@ const PasswordGenerator: React.FC = () => {
     }
     setPasswords(newPasswords);
     setCopiedIndex(null);
+
+    // Save settings to localStorage
+    localStorage.setItem('passwordGeneratorSettings', JSON.stringify(settings));
   }, [settings]);
 
   // Generate passwords on initial mount
