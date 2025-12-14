@@ -18,7 +18,7 @@ const Layout: React.FC = () => {
       {
         label: t('menu.password'),
         icon: Lock,
-        links: [{ label: t('menu.passwordGenerator'), link: '/password/generator' }],
+        links: [{ label: t('menu.passwordGenerator'), link: '/secret/generator' }],
       },
       {
         label: t('menu.network'),
@@ -28,7 +28,7 @@ const Layout: React.FC = () => {
       {
         label: t('menu.epoch'),
         icon: Clock,
-        links: [{ label: t('menu.epochConverter'), link: '/epoch/converter' }],
+        links: [{ label: t('menu.epochConverter'), link: '/time/converter' }],
       },
     ],
     [t],
