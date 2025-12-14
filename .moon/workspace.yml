@@ -12,4 +12,5 @@ vcs:
   hooks:
     pre-commit:
       - 'moon run :lint --affected'
+      - 'git status'
   syncHooks: true
