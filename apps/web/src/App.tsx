@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Home from './pages/Home';
-import PasswordGenerator from './pages/password/Generator';
+import PasswordGenerator from './pages/secret/Generator';
 import CidrCalculator from './pages/network/Cidr';
-import EpochConverter from './pages/epoch/Converter';
+import EpochConverter from './pages/time/Converter';
 import './i18n';
 
 function App() {
@@ -12,13 +12,13 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path="password">
+          <Route path="secret">
             <Route path="generator" element={<PasswordGenerator />} />
           </Route>
           <Route path="network">
             <Route path="cidr" element={<CidrCalculator />} />
           </Route>
-          <Route path="epoch">
+          <Route path="time">
             <Route path="converter" element={<EpochConverter />} />
           </Route>
         </Route>
