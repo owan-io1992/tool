@@ -16,7 +16,9 @@
     "description": "A collection of useful developer tools",
     "passwordDesc": "Generate secure passwords and check for leaks",
     "networkDesc": "Calculate CIDR and other network utilities",
-    "epochDesc": "Convert timestamps and work with dates"
+    "epochDesc": "Convert timestamps and work with dates",
+    "clientSideTitle": "Client-Side Only",
+    "clientSideDesc": "This application runs 100% in your browser. No data is sent to any server, ensuring your privacy and security."
   },
   "common": {
     "language": "Language",

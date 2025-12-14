@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Lock, Network, Clock, Sun, Moon, Home, Menu } from 'lucide-react';
+import { Lock, Network, Clock, Sun, Moon, Home, Menu, Github } from 'lucide-react';
 import { Group, ActionIcon, rem, useMantineColorScheme, ScrollArea, Code } from '@mantine/core';
 import { LinksGroup } from './NavbarLinksGroup';
 import classes from './Layout.module.css';
@@ -85,18 +85,32 @@ const Layout: React.FC = () => {
 
         <div className={classes.footer}>
           <Group justify="space-between" align="center">
-            <ActionIcon
-              variant="default"
-              onClick={() => toggleColorScheme()}
-              size="lg"
-              aria-label="Toggle color scheme"
-            >
-              {colorScheme === 'dark' ? (
-                <Sun style={{ width: rem(18), height: rem(18) }} />
-              ) : (
-                <Moon style={{ width: rem(18), height: rem(18) }} />
-              )}
-            </ActionIcon>
+            <Group gap={5}>
+              <ActionIcon
+                variant="default"
+                onClick={() => toggleColorScheme()}
+                size="lg"
+                aria-label="Toggle color scheme"
+              >
+                {colorScheme === 'dark' ? (
+                  <Sun style={{ width: rem(18), height: rem(18) }} />
+                ) : (
+                  <Moon style={{ width: rem(18), height: rem(18) }} />
+                )}
+              </ActionIcon>
+
+              <ActionIcon
+                component="a"
+                href="https://github.com/owan-io1992/tool"
+                target="_blank"
+                rel="noopener noreferrer"
+                variant="default"
+                size="lg"
+                aria-label="GitHub Repository"
+              >
+                <Github style={{ width: rem(18), height: rem(18) }} />
+              </ActionIcon>
+            </Group>
 
             <Group gap={5}>
               <ActionIcon

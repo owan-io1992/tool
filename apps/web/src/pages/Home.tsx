@@ -1,7 +1,17 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Shield, Network, Clock } from 'lucide-react';
-import { Container, Title, Text, SimpleGrid, Card, Group, ThemeIcon, rem } from '@mantine/core';
+import { Shield, Network, Clock, ShieldCheck } from 'lucide-react';
+import {
+  Container,
+  Title,
+  Text,
+  SimpleGrid,
+  Card,
+  Group,
+  ThemeIcon,
+  rem,
+  Alert,
+} from '@mantine/core';
 
 const Home: React.FC = () => {
   const { t } = useTranslation();
@@ -12,9 +22,21 @@ const Home: React.FC = () => {
         <Title order={1} mb="md" fw={900} style={{ fontSize: rem(42), lineHeight: 1.2 }}>
           {t('home.welcome')}
         </Title>
-        <Text size="xl" c="dimmed" maw={600} mx="auto">
+        <Text size="xl" c="dimmed" maw={600} mx="auto" mb="xl">
           {t('home.description')}
         </Text>
+
+        <Alert
+          variant="light"
+          color="green"
+          title={t('home.clientSideTitle')}
+          icon={<ShieldCheck size={16} />}
+          maw={600}
+          mx="auto"
+          styles={{ title: { marginBottom: rem(4) } }}
+        >
+          {t('home.clientSideDesc')}
+        </Alert>
       </div>
 
       <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="xl">

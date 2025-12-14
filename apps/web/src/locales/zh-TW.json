@@ -16,7 +16,9 @@
     "description": "開發者實用工具集合",
     "passwordDesc": "產生安全密碼與檢查外洩",
     "networkDesc": "CIDR 計算與其他網路工具",
-    "epochDesc": "時間戳轉換與日期處理"
+    "epochDesc": "時間戳轉換與日期處理",
+    "clientSideTitle": "純用戶端執行",
+    "clientSideDesc": "本應用程式 100% 在您的瀏覽器中運行。不會將任何資料傳送到伺服器，確保您的隱私與安全。"
   },
   "common": {
     "language": "語言",
