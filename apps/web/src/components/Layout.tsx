@@ -18,7 +18,10 @@ const Layout: React.FC = () => {
       {
         label: t('menu.password'),
         icon: Lock,
-        links: [{ label: t('menu.passwordGenerator'), link: '/secret/generator' }],
+        links: [
+          { label: t('menu.passwordGenerator'), link: '/secret/generator' },
+          { label: t('menu.base64Converter'), link: '/secret/base64' },
+        ],
       },
       {
         label: t('menu.network'),

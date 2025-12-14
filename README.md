@@ -6,8 +6,8 @@ site is live at https://owan-io1992.github.io/tool/
 
 ## Project Structure
 
-- **`apps/action`**: GitHub Action (TypeScript)
 - **`apps/web`**: Web Application (React + TypeScript)
+  UI is powered by [Mantine](https://mantine.dev/)
 
 ## Getting Started
 
@@ -45,8 +45,4 @@ site is live at https://owan-io1992.github.io/tool/
 - **Web App**:
   ```bash
   moon run web:dev
-  ```
-- **Action**:
-  ```bash
-  moon run action:build
   ```

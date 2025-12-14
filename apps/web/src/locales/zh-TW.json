@@ -9,7 +9,8 @@
     "network": "網路",
     "cidrCalculator": "CIDR 計算器",
     "epoch": "Epoch",
-    "epochConverter": "轉換器"
+    "epochConverter": "轉換器",
+    "base64Converter": "Base64 轉換器"
   },
   "home": {
     "welcome": "歡迎使用工具應用",
@@ -78,5 +79,13 @@
     "iso8601": "ISO 8601",
     "local": "本地時間",
     "relative": "相對時間"
+  },
+  "base64": {
+    "title": "Base64 轉換器",
+    "input": "輸入",
+    "output": "輸出",
+    "encode": "加密 (Encode)",
+    "decode": "解密 (Decode)",
+    "error": "錯誤"
   }
 }
